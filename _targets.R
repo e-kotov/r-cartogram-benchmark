@@ -85,6 +85,7 @@ list(
         ),
         iterations = 1L,
         check = FALSE,
+        memory = FALSE,
         time_unit = "s"
       )
       future::plan(future::sequential)
@@ -156,6 +157,7 @@ list(
         ),
         iterations = 1L,
         check = FALSE,
+        memory = FALSE,
         time_unit = "s"
       )
       future::plan(future::sequential)
