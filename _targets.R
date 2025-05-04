@@ -36,7 +36,7 @@ list(
     }
   ),
 
-  # non-continuous cartogram -----------------------------------------------
+  # non-continuous cartogram ------------------------------------------------
 
   # Build the full parameter grid as a data.frame
   tar_target(
@@ -58,159 +58,121 @@ list(
     iteration = "list"
   ),
 
-  # Benchmark each combo with bench::mark(), printing status and handling errors
+  # save full bench object for each combo
   tar_target(
-    name = ncont_bench_result,
-    packages = c("cartogram", "bench", "tibble"),
+    name = ncont_bench_raw,
+    packages = c("cartogram", "bench", "tibble", "dplyr"),
     command = {
-      # each ncont_parameters_list element is a 1-row df
       params <- ncont_parameters_list
       size <- params$size
       cores <- params$cores
 
-      # print the current combination
       message(sprintf(
-        "Testing ncont combo -> size: %d, cores: %d",
+        "Running non-continuous cartogram -> size: %d, cores: %d",
         size,
         cores
       ))
-
-      # slice zones once per combo
       z <- dplyr::slice(zones_full, 1L:size)
-
-      # attempt benchmark and catch errors
-      median_time <- tryCatch(
-        {
-          bm <- bench::mark(
-            cartogram::cartogram_cont(
-              x = z,
-              weight = "population",
-              n_cpu = cores,
-              show_progress = TRUE
-            ),
-            iterations = 1L,
-            check = FALSE,
-            time_unit = "s"
-          )
-          bm$median
-        },
-        error = function(e) {
-          message(sprintf(
-            "Benchmark error for size=%d, cores=%d: %s",
-            size,
-            cores,
-            e$message
-          ))
-          NA_real_
-        }
+      bm <- bench::mark(
+        cartogram::cartogram_cont(
+          x = z,
+          weight = "population",
+          n_cpu = cores,
+          show_progress = TRUE
+        ),
+        iterations = 1L,
+        check = FALSE,
+        time_unit = "s"
       )
-
-      # return a one-row tibble, even on error
-      tibble::tibble(
-        size = size,
-        cores = cores,
-        median_s = median_time
-      )
+      list(size = size, cores = cores, bench = bm)
     },
     pattern = map(ncont_parameters_list),
     iteration = "list",
     memory = "transient"
   ),
 
-  # Collate into one summary table
+  # extract just the median times into a summary tibble
   tar_target(
-    ncont_speed_summary,
-    dplyr::bind_rows(ncont_bench_result)
+    name = ncont_speed_summary,
+    {
+      purrr::map_dfr(
+        ncont_bench_raw,
+        ~ tibble::tibble(
+          size = .x$size,
+          cores = .x$cores,
+          median_s = .x$bench$median
+        )
+      )
+    }
   ),
 
   # continuous cartogram ---------------------------------------------------
 
-  # # Build the full parameter grid as a data.frame
-  # tar_target(
-  #   cont_speed_params_grid,
-  #   expand.grid(
-  #     size = sizes,
-  #     cores = n_cores,
-  #     itmax = itermax_vals,
-  #     stringsAsFactors = FALSE
-  #   )
-  # ),
+  # Build the full parameter grid as a data.frame
+  tar_target(
+    cont_speed_params_grid,
+    expand.grid(
+      size = sizes,
+      cores = n_cores,
+      itmax = itermax_vals,
+      stringsAsFactors = FALSE
+    )
+  ),
 
-  # # Split into a list of 1-row data.frames, one per combo
-  # tar_target(
-  #   cont_parameters_list,
-  #   split(cont_speed_params_grid, seq_len(nrow(cont_speed_params_grid))),
-  #   iteration = "list"
-  # ),
+  # Split into a list of 1-row data.frames, one per combo
+  tar_target(
+    cont_parameters_list,
+    split(cont_speed_params_grid, seq_len(nrow(cont_speed_params_grid))),
+    iteration = "list"
+  ),
 
-  # # Benchmark each combo with bench::mark(), printing status and handling errors
-  # tar_target(
-  #   name = cont_bench_result,
-  #   packages = c("cartogram", "bench", "tibble"),
-  #   command = {
-  #     # each cont_parameters_list element is a 1-row df
-  #     params <- cont_parameters_list
-  #     size <- params$size
-  #     cores <- params$cores
-  #     itmax <- params$itmax
+  # save full bench object for each combo
+  tar_target(
+    cont_bench_raw,
+    {
+      params <- cont_parameters_list
+      size <- params$size
+      cores <- params$cores
+      itmax <- params$itmax
+      message(sprintf(
+        "Running continuous cartogram -> size: %d, cores: %d, itermax: %d",
+        size,
+        cores,
+        itmax
+      ))
+      z <- dplyr::slice(zones_full, 1L:size)
+      bm <- bench::mark(
+        cartogram::cartogram_cont(
+          x = z,
+          weight = "population",
+          itermax = itmax,
+          n_cpu = cores,
+          show_progress = FALSE
+        ),
+        iterations = 1L,
+        check = FALSE,
+        time_unit = "s"
+      )
+      list(size = size, cores = cores, itmax = itmax, bench = bm)
+    },
+    pattern = map(cont_parameters_list),
+    iteration = "list",
+    memory = "transient"
+  ),
 
-  #     # print the current combination
-  #     message(sprintf(
-  #       "Testing combo -> size: %d, cores: %d, itermax: %d",
-  #       size,
-  #       cores,
-  #       itmax
-  #     ))
-
-  #     # slice zones once per combo
-  #     z <- dplyr::slice(zones_full, 1L:size)
-
-  #     # attempt benchmark and catch errors
-  #     median_time <- tryCatch(
-  #       {
-  #         bm <- bench::mark(
-  #           cartogram::cartogram_cont(
-  #             x = z,
-  #             weight = "population",
-  #             itermax = itmax,
-  #             n_cpu = cores,
-  #             show_progress = FALSE
-  #           ),
-  #           iterations = 1L,
-  #           check = FALSE,
-  #           time_unit = "s"
-  #         )
-  #         bm$median
-  #       },
-  #       error = function(e) {
-  #         message(sprintf(
-  #           "Benchmark error for size=%d, cores=%d, itermax=%d: %s",
-  #           size,
-  #           cores,
-  #           itmax,
-  #           e$message
-  #         ))
-  #         NA_real_
-  #       }
-  #     )
-
-  #     # return a one-row tibble, even on error
-  #     tibble::tibble(
-  #       size = size,
-  #       cores = cores,
-  #       itermax = itmax,
-  #       median_s = median_time
-  #     )
-  #   },
-  #   pattern = map(cont_parameters_list),
-  #   iteration = "list",
-  #   memory = "transient"
-  # ),
-
-  # # Collate into one summary table
-  # tar_target(
-  #   cont_speed_summary,
-  #   dplyr::bind_rows(cont_bench_result)
-  # )
-  NULL
+  # extract just the median times into a summary tibble
+  tar_target(
+    name = cont_speed_summary,
+    {
+      purrr::map_dfr(
+        cont_bench_raw,
+        ~ tibble::tibble(
+          size = .x$size,
+          cores = .x$cores,
+          itermax = .x$itmax,
+          median_s = .x$bench$median
+        )
+      )
+    }
+  )
 )
