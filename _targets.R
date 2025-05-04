@@ -83,7 +83,8 @@ list(
           n_cpu = "respect_future_plan",
           show_progress = getOption("global.ncont_show_progress")
         ),
-        iterations = 1L,
+        iterations = 3L,
+        filter_gc = FALSE,
         check = FALSE,
         memory = FALSE,
         time_unit = "s"
@@ -155,7 +156,8 @@ list(
           n_cpu = "respect_future_plan",
           show_progress = getOption("global.cont_show_progress")
         ),
-        iterations = 1L,
+        iterations = 3L,
+        filter_gc = FALSE,
         check = FALSE,
         memory = FALSE,
         time_unit = "s"
