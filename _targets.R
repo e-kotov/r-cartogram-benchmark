@@ -75,17 +75,19 @@ list(
         cores
       ))
       z <- dplyr::slice(zones_full, 1L:size)
+      future::plan(future.mirai::mirai_multisession, workers = cores)
       bm <- bench::mark(
         cartogram::cartogram_cont(
           x = z,
           weight = "population",
-          n_cpu = cores,
+          n_cpu = "respect_future_plan",
           show_progress = getOption("global.ncont_show_progress")
         ),
         iterations = 1L,
         check = FALSE,
         time_unit = "s"
       )
+      future::plan(future::sequential)
       list(size = size, cores = cores, bench = bm)
     },
     pattern = map(ncont_parameters_list),
@@ -143,18 +145,20 @@ list(
         itmax
       ))
       z <- dplyr::slice(zones_full, 1L:size)
+      future::plan(future.mirai::mirai_multisession, workers = cores)
       bm <- bench::mark(
         cartogram::cartogram_cont(
           x = z,
           weight = "population",
           itermax = itmax,
-          n_cpu = cores,
+          n_cpu = "respect_future_plan",
           show_progress = getOption("global.cont_show_progress")
         ),
         iterations = 1L,
         check = FALSE,
         time_unit = "s"
       )
+      future::plan(future::sequential)
       list(size = size, cores = cores, itmax = itmax, bench = bm)
     },
     pattern = map(cont_parameters_list),

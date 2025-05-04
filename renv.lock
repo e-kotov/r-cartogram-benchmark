@@ -1882,6 +1882,36 @@
       "Repository": "CRAN",
       "Encoding": "UTF-8"
     },
+    "future.mirai": {
+      "Package": "future.mirai",
+      "Version": "0.2.2",
+      "Source": "Repository",
+      "Depends": [
+        "future"
+      ],
+      "Imports": [
+        "mirai (>= 1.1.0)",
+        "parallelly",
+        "utils"
+      ],
+      "Suggests": [
+        "future.tests",
+        "future.apply",
+        "listenv"
+      ],
+      "Title": "A 'Future' API for Parallel Processing using 'mirai'",
+      "Description": "Implementation of the 'Future' API <doi:10.32614/RJ-2021-048> on top of the 'mirai' package <doi:10.5281/zenodo.7912722>. This allows you to process futures, as defined by the 'future' package, in parallel out of the box, on your local machine or across remote machines. Contrary to back-ends relying on the 'parallel' package (e.g. 'multisession') and socket connections, 'mirai_cluster' and 'mirai_multisession', provided here, can run more than 125 parallel R processes.",
+      "Authors@R": "c( person(\"Henrik\", \"Bengtsson\", role = c(\"aut\", \"cre\", \"cph\"), email = \"henrikb@braju.com\", comment = c(ORCID = \"0000-0002-7579-5165\") ), person(\"Charlie\", \"Gao\", role = c(\"ctb\"), email = \"charlie.gao@shikokuchuo.net\", comment = c(ORCID = \"0000-0002-0750-061X\") ))",
+      "License": "GPL (>= 3)",
+      "Encoding": "UTF-8",
+      "URL": "https://future.mirai.futureverse.org, https://github.com/futureverse/future.mirai",
+      "BugReports": "https://github.com/futureverse/future.mirai/issues",
+      "RoxygenNote": "7.3.2",
+      "NeedsCompilation": "no",
+      "Author": "Henrik Bengtsson [aut, cre, cph] (<https://orcid.org/0000-0002-7579-5165>), Charlie Gao [ctb] (<https://orcid.org/0000-0002-0750-061X>)",
+      "Maintainer": "Henrik Bengtsson <henrikb@braju.com>",
+      "Repository": "CRAN"
+    },
     "gargle": {
       "Package": "gargle",
       "Version": "1.5.2",
@@ -3121,6 +3151,39 @@
       "Maintainer": "Yihui Xie <xie@yihui.name>",
       "Repository": "RSPM"
     },
+    "mirai": {
+      "Package": "mirai",
+      "Version": "2.2.0",
+      "Source": "Repository",
+      "Type": "Package",
+      "Title": "Minimalist Async Evaluation Framework for R",
+      "Description": "Designed for simplicity, a 'mirai' evaluates an R expression asynchronously in a parallel process, locally or distributed over the network. The result is automatically available upon completion. Modern networking and concurrency, built on 'nanonext' and 'NNG' (Nanomsg Next Gen), ensures reliable and efficient scheduling over fast inter-process communications or TCP/IP secured by TLS. Distributed computing can launch remote resources via SSH or cluster managers. An inherently queued architecture handles many more tasks than available processes, and requires no storage on the file system. Innovative features include support for otherwise non-exportable reference objects, event-driven promises, and asynchronous parallel map.",
+      "Authors@R": "c(person(given = \"Charlie\", family = \"Gao\", role = c(\"aut\", \"cre\"), email = \"charlie.gao@shikokuchuo.net\", comment = c(ORCID = \"0000-0002-0750-061X\")), person(given = \"Joe\", family = \"Cheng\", role = \"ctb\", email = \"joe@posit.co\"), person(given = \"Hibiki AI Limited\", role = \"cph\"), person(given = \"Posit Software, PBC\", role = \"cph\"))",
+      "License": "GPL (>= 3)",
+      "BugReports": "https://github.com/shikokuchuo/mirai/issues",
+      "URL": "https://shikokuchuo.net/mirai/, https://github.com/shikokuchuo/mirai",
+      "Encoding": "UTF-8",
+      "Depends": [
+        "R (>= 3.6)"
+      ],
+      "Imports": [
+        "nanonext (>= 1.5.2)"
+      ],
+      "Enhances": [
+        "parallel",
+        "promises"
+      ],
+      "Suggests": [
+        "cli",
+        "litedown"
+      ],
+      "VignetteBuilder": "litedown",
+      "RoxygenNote": "7.3.2",
+      "NeedsCompilation": "no",
+      "Author": "Charlie Gao [aut, cre] (<https://orcid.org/0000-0002-0750-061X>), Joe Cheng [ctb], Hibiki AI Limited [cph], Posit Software, PBC [cph]",
+      "Maintainer": "Charlie Gao <charlie.gao@shikokuchuo.net>",
+      "Repository": "CRAN"
+    },
     "modelr": {
       "Package": "modelr",
       "Version": "0.1.11",
@@ -3159,6 +3222,37 @@
       "Author": "Hadley Wickham [aut, cre], Posit Software, PBC [cph, fnd]",
       "Maintainer": "Hadley Wickham <hadley@posit.co>",
       "Repository": "https://packagemanager.posit.co/cran/2025-04-14"
+    },
+    "nanonext": {
+      "Package": "nanonext",
+      "Version": "1.5.2",
+      "Source": "Repository",
+      "Type": "Package",
+      "Title": "NNG (Nanomsg Next Gen) Lightweight Messaging Library",
+      "Description": "R binding for NNG (Nanomsg Next Gen), a successor to ZeroMQ. NNG is a socket library for reliable, high-performance messaging over in-process, IPC, TCP, WebSocket and secure TLS transports. Implements 'Scalability Protocols', a standard for common communications patterns including publish/subscribe, request/reply and service discovery. As its own threaded concurrency framework, provides a toolkit for asynchronous programming and distributed computing. Intuitive 'aio' objects resolve automatically when asynchronous operations complete, and synchronisation primitives allow R to wait upon events signalled by concurrent threads.",
+      "Authors@R": "c(person(given = \"Charlie\", family = \"Gao\", role = c(\"aut\", \"cre\"), email = \"charlie.gao@shikokuchuo.net\", comment = c(ORCID = \"0000-0002-0750-061X\")), person(given = \"Hibiki AI Limited\", role = \"cph\"), person(given = \"R Consortium\", role = \"fnd\"))",
+      "License": "GPL (>= 3)",
+      "BugReports": "https://github.com/shikokuchuo/nanonext/issues",
+      "URL": "https://shikokuchuo.net/nanonext/, https://github.com/shikokuchuo/nanonext/",
+      "Encoding": "UTF-8",
+      "SystemRequirements": "'libnng' >= 1.9 and 'libmbedtls' >= 2.5, or 'cmake' and 'xz' to compile NNG and/or Mbed TLS included in package sources",
+      "Depends": [
+        "R (>= 3.6)"
+      ],
+      "Enhances": [
+        "promises"
+      ],
+      "Suggests": [
+        "later",
+        "litedown"
+      ],
+      "VignetteBuilder": "litedown",
+      "RoxygenNote": "7.3.2",
+      "Config/build/compilation-database": "true",
+      "NeedsCompilation": "yes",
+      "Author": "Charlie Gao [aut, cre] (<https://orcid.org/0000-0002-0750-061X>), Hibiki AI Limited [cph], R Consortium [fnd]",
+      "Maintainer": "Charlie Gao <charlie.gao@shikokuchuo.net>",
+      "Repository": "CRAN"
     },
     "nlme": {
       "Package": "nlme",
