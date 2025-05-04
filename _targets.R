@@ -15,12 +15,14 @@ tar_option_set(
   format = "qs"
 )
 
-options("spod_data_dir" = "~/home/nosync/cache/mitms/")
+options("global.spod_data_dir" = "data/mitms/")
+options("global.ncont_show_progress" = TRUE)
+options("global.cont_show_progress" = TRUE)
 
 # parameter vectors
 sizes <- c(200, 500, 1000, 2000, 3000, 3900)
-# n_cores <- c(16, 12, 8, 6, 4, 3, 2, 1)
-n_cores <- c(6, 4, 3, 2, 1)
+n_cores <- c(16, 12, 8, 6, 4, 3, 2, 1)
+# n_cores <- c(6, 4, 3, 2, 1)
 itermax_vals <- c(3, 7, 15)
 
 list(
@@ -78,7 +80,7 @@ list(
           x = z,
           weight = "population",
           n_cpu = cores,
-          show_progress = TRUE
+          show_progress = getOption("global.ncont_show_progress")
         ),
         iterations = 1L,
         check = FALSE,
@@ -147,7 +149,7 @@ list(
           weight = "population",
           itermax = itmax,
           n_cpu = cores,
-          show_progress = FALSE
+          show_progress = getOption("global.cont_show_progress")
         ),
         iterations = 1L,
         check = FALSE,
