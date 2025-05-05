@@ -10,18 +10,9 @@
 # read more at https://docs.ropensci.org/targets/ and https://books.ropensci.org/targets/
 
 library(targets)
-# library(crew)
 
 tar_option_set(
   format = "qs"
-  # format = "qs",
-  # controller = crew::crew_controller_local(workers = 2),
-  # resources = tar_resources(
-  #   crew = tar_resources_crew(
-  #     seconds_timeout = 600
-  #   )
-  # )
-  # controller = crew_controller_local(workers = 3)
 )
 
 options("global.spod_data_dir" = "data/mitms/")
