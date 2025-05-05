@@ -30,8 +30,8 @@ options("global.cont_show_progress" = TRUE)
 options("global.cont_verbose" = TRUE)
 
 # parameter vectors
-sizes <- c(200, 500, 1000, 2000, 3000, 3700)
-n_cores <- c(16, 12, 8, 6, 4, 3, 2, 1)
+sizes <- c(100, 250, 500, 1000, 2000, 3700)
+n_cores <- c(16, 8, 4, 3, 2, 1)
 itermax_vals <- c(3, 7, 15)
 plans <- c("mirai_multisession", "future_multisession")
 
