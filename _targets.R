@@ -22,8 +22,8 @@ options("global.cont_show_progress" = TRUE)
 # parameter vectors
 sizes <- c(200, 500, 1000, 2000, 3000, 3700)
 n_cores <- c(16, 12, 8, 6, 4, 3, 2, 1)
-# n_cores <- c(6, 4, 3, 2, 1)
 itermax_vals <- c(3, 7, 15)
+plans <- c("mirai_multisession", "future_multisession")
 
 list(
   # load & simplify zones once
@@ -46,6 +46,7 @@ list(
     command = expand.grid(
       size = sizes,
       cores = n_cores,
+      plan = plans,
       stringsAsFactors = FALSE
     )
   ),
@@ -76,16 +77,24 @@ list(
       params <- ncont_parameters_list
       size <- params$size
       cores <- params$cores
+      plan <- params$plan
 
       message(sprintf(
-        "Running non-continuous cartogram -> size: %d, cores: %d",
+        "Running non-continuous cartogram → size: %d, cores: %d, plan: %s",
         size,
-        cores
+        cores,
+        plan
       ))
       z <- dplyr::slice(zones_full, 1L:size)
-      future::plan(future.mirai::mirai_multisession, workers = cores)
+
+      if (plan == "mirai_multisession") {
+        future::plan(future.mirai::mirai_multisession, workers = cores)
+      } else if (plan == "future_multisession") {
+        future::plan(future::multisession, workers = cores)
+      }
+
       bm <- bench::mark(
-        cartogram::cartogram_cont(
+        cartogram::cartogram_ncont(
           x = z,
           weight = "population",
           n_cpu = "respect_future_plan",
@@ -97,8 +106,15 @@ list(
         memory = FALSE,
         time_unit = "s"
       )
+
       future::plan(future::sequential)
-      list(size = size, cores = cores, bench = bm)
+
+      list(
+        size = size,
+        cores = cores,
+        plan = plan,
+        bench = bm
+      )
     },
     pattern = map(ncont_parameters_list),
     iteration = "list",
@@ -115,6 +131,7 @@ list(
         ~ tibble::tibble(
           size = .x$size,
           cores = .x$cores,
+          plan = .x$plan,
           median_s = .x$bench$median
         )
       )
@@ -130,6 +147,7 @@ list(
       size = sizes,
       cores = n_cores,
       itmax = itermax_vals,
+      plan = plans,
       stringsAsFactors = FALSE
     )
   ),
@@ -161,14 +179,23 @@ list(
       size <- params$size
       cores <- params$cores
       itmax <- params$itmax
+      plan <- params$plan
+
       message(sprintf(
-        "Running continuous cartogram -> size: %d, cores: %d, itermax: %d",
+        "Running continuous cartogram → size: %d, cores: %d, itmax: %d, plan: %s",
         size,
         cores,
-        itmax
+        itmax,
+        plan
       ))
       z <- dplyr::slice(zones_full, 1L:size)
-      future::plan(future.mirai::mirai_multisession, workers = cores)
+
+      if (plan == "mirai_multisession") {
+        future::plan(future.mirai::mirai_multisession, workers = cores)
+      } else if (plan == "future_multisession") {
+        future::plan(future::multisession, workers = cores)
+      }
+
       bm <- bench::mark(
         cartogram::cartogram_cont(
           x = z,
@@ -183,8 +210,16 @@ list(
         memory = FALSE,
         time_unit = "s"
       )
+
       future::plan(future::sequential)
-      list(size = size, cores = cores, itmax = itmax, bench = bm)
+
+      list(
+        size = size,
+        cores = cores,
+        itmax = itmax,
+        plan = plan,
+        bench = bm
+      )
     },
     pattern = map(cont_parameters_list),
     iteration = "list",
@@ -201,7 +236,8 @@ list(
         ~ tibble::tibble(
           size = .x$size,
           cores = .x$cores,
-          itermax = .x$itmax,
+          itmax = .x$itmax,
+          plan = .x$plan,
           median_s = .x$bench$median
         )
       )
