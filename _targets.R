@@ -32,9 +32,12 @@ list(
     packages = c("spanishoddata", "sf", "dplyr"),
     command = {
       spanishoddata::spod_set_data_dir(getOption("global.spod_data_dir"))
-      spanishoddata::spod_get_zones("distr", ver = 2) |>
+      zones <- spanishoddata::spod_get_zones("distr", ver = 2) |>
         dplyr::filter(population > 0) |>
         sf::st_simplify(dTolerance = 200)
+      zones <- zones |>
+        dplyr::filter(!sf::st_is_empty(zones))
+      zones
     }
   ),
 
