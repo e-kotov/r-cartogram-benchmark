@@ -10,14 +10,24 @@
 # read more at https://docs.ropensci.org/targets/ and https://books.ropensci.org/targets/
 
 library(targets)
+# library(crew)
 
 tar_option_set(
   format = "qs"
+  # format = "qs",
+  # controller = crew::crew_controller_local(workers = 2),
+  # resources = tar_resources(
+  #   crew = tar_resources_crew(
+  #     seconds_timeout = 600
+  #   )
+  # )
+  # controller = crew_controller_local(workers = 3)
 )
 
 options("global.spod_data_dir" = "data/mitms/")
 options("global.ncont_show_progress" = TRUE)
 options("global.cont_show_progress" = TRUE)
+options("global.cont_verbose" = TRUE)
 
 # parameter vectors
 sizes <- c(200, 500, 1000, 2000, 3000, 3700)
@@ -33,8 +43,7 @@ list(
     command = {
       spanishoddata::spod_set_data_dir(getOption("global.spod_data_dir"))
       zones <- spanishoddata::spod_get_zones("distr", ver = 2) |>
-        dplyr::filter(population > 0) |>
-        sf::st_simplify(dTolerance = 200)
+        dplyr::filter(population > 0)
       zones <- zones |>
         dplyr::filter(!sf::st_is_empty(zones))
       zones
@@ -205,7 +214,8 @@ list(
           weight = "population",
           itermax = itmax,
           n_cpu = "respect_future_plan",
-          show_progress = getOption("global.cont_show_progress")
+          show_progress = getOption("global.cont_show_progress"),
+          verbose = getOption("global.cont_verbose")
         ),
         iterations = 3L,
         filter_gc = FALSE,
