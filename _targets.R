@@ -20,7 +20,7 @@ options("global.ncont_show_progress" = TRUE)
 options("global.cont_show_progress" = TRUE)
 
 # parameter vectors
-sizes <- c(200, 500, 1000, 2000, 3000, 3900)
+sizes <- c(200, 500, 1000, 2000, 3000, 3700)
 n_cores <- c(16, 12, 8, 6, 4, 3, 2, 1)
 # n_cores <- c(6, 4, 3, 2, 1)
 itermax_vals <- c(3, 7, 15)
@@ -63,7 +63,15 @@ list(
   # save full bench object for each combo
   tar_target(
     name = ncont_bench_raw,
-    packages = c("cartogram", "bench", "tibble", "dplyr"),
+    packages = c(
+      "cartogram",
+      "bench",
+      "tibble",
+      "dplyr",
+      "sf",
+      "future",
+      "future.mirai"
+    ),
     command = {
       params <- ncont_parameters_list
       size <- params$size
@@ -100,7 +108,8 @@ list(
   # extract just the median times into a summary tibble
   tar_target(
     name = ncont_speed_summary,
-    {
+    packages = c("tibble", "purrr"),
+    command = {
       purrr::map_dfr(
         ncont_bench_raw,
         ~ tibble::tibble(
@@ -116,8 +125,8 @@ list(
 
   # Build the full parameter grid as a data.frame
   tar_target(
-    cont_speed_params_grid,
-    expand.grid(
+    name = cont_speed_params_grid,
+    command = expand.grid(
       size = sizes,
       cores = n_cores,
       itmax = itermax_vals,
@@ -127,15 +136,27 @@ list(
 
   # Split into a list of 1-row data.frames, one per combo
   tar_target(
-    cont_parameters_list,
-    split(cont_speed_params_grid, seq_len(nrow(cont_speed_params_grid))),
+    name = cont_parameters_list,
+    command = split(
+      cont_speed_params_grid,
+      seq_len(nrow(cont_speed_params_grid))
+    ),
     iteration = "list"
   ),
 
   # save full bench object for each combo
   tar_target(
-    cont_bench_raw,
-    {
+    name = cont_bench_raw,
+    packages = c(
+      "cartogram",
+      "bench",
+      "tibble",
+      "dplyr",
+      "sf",
+      "future",
+      "future.mirai"
+    ),
+    command = {
       params <- cont_parameters_list
       size <- params$size
       cores <- params$cores
@@ -173,7 +194,8 @@ list(
   # extract just the median times into a summary tibble
   tar_target(
     name = cont_speed_summary,
-    {
+    packages = c("tibble", "purrr"),
+    command = {
       purrr::map_dfr(
         cont_bench_raw,
         ~ tibble::tibble(
