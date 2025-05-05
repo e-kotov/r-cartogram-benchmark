@@ -80,7 +80,7 @@ list(
       plan <- params$plan
 
       message(sprintf(
-        "Running non-continuous cartogram → size: %d, cores: %d, plan: %s",
+        "Running non-continuous cartogram. size: %d, cores: %d, plan: %s",
         size,
         cores,
         plan
@@ -182,7 +182,7 @@ list(
       plan <- params$plan
 
       message(sprintf(
-        "Running continuous cartogram → size: %d, cores: %d, itmax: %d, plan: %s",
+        "Running continuous cartogram. size: %d, cores: %d, itmax: %d, plan: %s",
         size,
         cores,
         itmax,
