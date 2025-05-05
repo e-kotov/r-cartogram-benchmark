@@ -31,7 +31,7 @@ list(
     name = zones_full,
     packages = c("spanishoddata", "sf", "dplyr"),
     command = {
-      spanishoddata::spod_set_data_dir(getOption("spod_data_dir"))
+      spanishoddata::spod_set_data_dir(getOption("global.spod_data_dir"))
       spanishoddata::spod_get_zones("distr", ver = 2) |>
         dplyr::filter(population > 0) |>
         sf::st_simplify(dTolerance = 200)
