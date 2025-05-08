@@ -19,9 +19,10 @@ options("global.spod_data_dir" = "data/mitms/")
 options("global.ncont_show_progress" = TRUE)
 options("global.cont_show_progress" = TRUE)
 options("global.cont_verbose" = TRUE)
+n_repeat_benchmark <- 1L # good enough for non-shared system
 
 # parameter vectors
-sizes <- c(100, 250, 500, 1000, 2000, 3700)
+sizes <- c(50, 100, 250, 500, 1000, 2000)
 n_cores <- c(16, 8, 4, 3, 2, 1)
 itermax_vals <- c(3, 7, 15)
 plans <- c("mirai_multisession", "future_multisession")
@@ -103,7 +104,7 @@ list(
           n_cpu = "respect_future_plan",
           show_progress = getOption("global.ncont_show_progress")
         ),
-        iterations = 3L,
+        iterations = n_repeat_benchmark,
         filter_gc = FALSE,
         check = FALSE,
         memory = FALSE,
@@ -208,7 +209,7 @@ list(
           show_progress = getOption("global.cont_show_progress"),
           verbose = getOption("global.cont_verbose")
         ),
-        iterations = 3L,
+        iterations = n_repeat_benchmark,
         filter_gc = FALSE,
         check = FALSE,
         memory = FALSE,
